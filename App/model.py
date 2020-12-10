@@ -118,56 +118,63 @@ def addtaxis(taxis, trip):
 # Funciones de consulta
 
 def getMostPointsinDate(analayzer,date,top):
-    info = om.get(analayzer['dates'],date)
-    taxismap = me.getValue(info)
-    taxislist = m.keySet(taxismap)
-    taxispoints = mq.newMinPQ(compareinverted)
-    iterator = it.newIterator(taxislist)
-    res = lt.newList()
-    while it.hasNext(iterator):
-        element = it.next(iterator)
-        taxix = m.get(taxismap,element)
-        taxi = me.getValue(taxix)
-        points = (taxi['miles']/taxi['money'])*taxi['services']
-        mq.insert(taxispoints,(element,points))
-    for a in range(0,top):
-        lt.addLast(res,mq.delMin(taxispoints))
-    return res
-
-def getMostPointsinDateRange(analyzer,date1,date2,top):
-    info = om.values(analyzer['dates'],date1,date2)
-    iterator1 = it.newIterator(info)
-    taxis = m.newMap(numelements=1000, maptype = 'PROBING', loadfactor=0.5, comparefunction=comparetaxi)
-    taxispoints = mq.newMinPQ(compareinverted)
-    res = lt.newList()
-    while it.hasNext(iterator1):
-        element1 = it.next(iterator1)
-        taxislist = m.keySet(element1)
-        iterator2 = it.newIterator(taxislist)
-        while it.hasNext(iterator2):
-            element2 = it.next(iterator2)
-            taxix = m.get(element1,element2)
+    try:
+        info = om.get(analayzer['dates'],date)
+        taxismap = me.getValue(info)
+        taxislist = m.keySet(taxismap)
+        taxispoints = mq.newMinPQ(compareinverted)
+        iterator = it.newIterator(taxislist)
+        res = lt.newList()
+        while it.hasNext(iterator):
+            element = it.next(iterator)
+            taxix = m.get(taxismap,element)
             taxi = me.getValue(taxix)
             points = (taxi['miles']/taxi['money'])*taxi['services']
-            istaxi = m.get(taxis,element2)
-            if istaxi == None:
-                m.put(taxis,element2,points)
-            else:
-                value = me.getValue(istaxi)
-                value += points
-                m.put(taxis,element2,value)
+            mq.insert(taxispoints,(element,points))
+        for a in range(0,top):
+            lt.addLast(res,mq.delMin(taxispoints))
+    except:
+        res = None
+    return res
     
-    taxislist = m.keySet(taxis)
-    iterator = it.newIterator(taxislist)
-    while it.hasNext(iterator):
-        element = it.next(iterator)
-        taxix = m.get(taxis,element)
-        taxid = me.getKey(taxix)
-        taxipo = me.getValue(taxix)
-        mq.insert(taxispoints,(taxid,taxipo))
 
-    for a in range(0,top):
-        lt.addLast(res,mq.delMin(taxispoints))
+def getMostPointsinDateRange(analyzer,date1,date2,top):
+    try:
+        info = om.values(analyzer['dates'],date1,date2)
+        iterator1 = it.newIterator(info)
+        taxis = m.newMap(numelements=1000, maptype = 'PROBING', loadfactor=0.5, comparefunction=comparetaxi)
+        taxispoints = mq.newMinPQ(compareinverted)
+        res = lt.newList()
+        while it.hasNext(iterator1):
+            element1 = it.next(iterator1)
+            taxislist = m.keySet(element1)
+            iterator2 = it.newIterator(taxislist)
+            while it.hasNext(iterator2):
+                element2 = it.next(iterator2)
+                taxix = m.get(element1,element2)
+                taxi = me.getValue(taxix)
+                points = (taxi['miles']/taxi['money'])*taxi['services']
+                istaxi = m.get(taxis,element2)
+                if istaxi == None:
+                    m.put(taxis,element2,points)
+                else:
+                    value = me.getValue(istaxi)
+                    value += points
+                    m.put(taxis,element2,value)
+        
+        taxislist = m.keySet(taxis)
+        iterator = it.newIterator(taxislist)
+        while it.hasNext(iterator):
+            element = it.next(iterator)
+            taxix = m.get(taxis,element)
+            taxid = me.getKey(taxix)
+            taxipo = me.getValue(taxix)
+            mq.insert(taxispoints,(taxid,taxipo))
+
+        for a in range(0,top):
+            lt.addLast(res,mq.delMin(taxispoints))
+    except:
+        res = None
     return res 
   
 

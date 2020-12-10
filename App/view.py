@@ -83,33 +83,42 @@ def optionThree():
     pass
 
 
-def optionFour():  #N
-    des = int(input('¿Desea conocer una fecha (1) o un rango de fechas (2)? '))
-    if des == 1:
-        date = input('Ingrese la fecha que desea conocer: ')
-        top = int(input('Ingrese el número de elementos que quiere en el top (AAAA-MM-DD): '))
-        res = controller.getMostPointsinDate(cont,date,top)
-        iterator = it.newIterator(res)
-        i = 1
-        while it.hasNext(iterator):
-            element = it.next(iterator)
-            pr = "{0}. El taxi {1} con {2} puntos.".format(i,element[0],element[1])
-            print(pr)
-            i+=1
-    elif des == 2: 
-        date1 = input('Ingrese la fecha inicial del rango que desea conocer (AAAA-MM-DD): ')
-        date2 = input('Ingrese la fecha final del rango que desea conocer (AAAA-MM-DD): ')
-        top = int(input('Ingrese el número de elementos que quiere en el top: '))
-        res = controller.getMostPointsinDateRange(cont,date1,date2,top)
-        iterator = it.newIterator(res)
-        i = 1
-        while it.hasNext(iterator):
-            element = it.next(iterator)
-            pr = "{0}. El taxi {1} con {2} puntos.".format(i,element[0],element[1])
-            print(pr)
-            i+=1
-    else:
-        print('Ingrese una opción válida')
+def optionFour(): 
+    try:
+        des = int(input('¿Desea conocer una fecha (1) o un rango de fechas (2)? '))
+        if des == 1:
+            date = input('Ingrese la fecha que desea conocer: ')
+            top = int(input('Ingrese el número de elementos que quiere en el top (AAAA-MM-DD): '))
+            res = controller.getMostPointsinDate(cont,date,top)
+            if res != None:
+                iterator = it.newIterator(res)
+                i = 1
+                while it.hasNext(iterator):
+                    element = it.next(iterator)
+                    pr = "{0}. El taxi {1} con {2} puntos.".format(i,element[0],element[1])
+                    print(pr)
+                    i+=1
+            else:
+                print("\nLa fecha ingresada no tiene taxis.")
+        elif des == 2: 
+            date1 = input('Ingrese la fecha inicial del rango que desea conocer (AAAA-MM-DD): ')
+            date2 = input('Ingrese la fecha final del rango que desea conocer (AAAA-MM-DD): ')
+            top = int(input('Ingrese el número de elementos que quiere en el top: '))
+            res = controller.getMostPointsinDateRange(cont,date1,date2,top)
+            if res != None:
+                iterator = it.newIterator(res)
+                i = 1
+                while it.hasNext(iterator):
+                    element = it.next(iterator)
+                    pr = "{0}. El taxi {1} con {2} puntos.".format(i,element[0],element[1])
+                    print(pr)
+                    i+=1
+            else:
+                print("\nEl rango ingresado no tiene taxis")
+        else:
+            print('Ingrese una opción válida')
+    except:
+        print('Ingrese una fecha válida.')
 
 
 def optionFive():
