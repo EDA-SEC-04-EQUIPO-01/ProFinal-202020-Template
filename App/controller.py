@@ -27,6 +27,7 @@
 import config as cf
 from App import model
 import csv
+import datetime
 
 """
 El controlador se encarga de mediar entre la vista y el modelo.
@@ -59,4 +60,12 @@ def loadFile(analyzer, file):
 
 # ___________________________________________________
 #  Funciones para consultas
+def getMostPointsinDate(analayzer,date,top):
+    date = datetime.datetime.strptime(date, '%Y-%m-%d')
+    return model.getMostPointsinDate(analayzer,date,top)
+
+def getMostPointsinDateRange(analyzer,date1,date2,top):
+    date1 = datetime.datetime.strptime(date1, '%Y-%m-%d')
+    date2 = datetime.datetime.strptime(date2, '%Y-%m-%d')
+    return model.getMostPointsinDateRange(analyzer,date1,date2,top)
 # ___________________________________________________
