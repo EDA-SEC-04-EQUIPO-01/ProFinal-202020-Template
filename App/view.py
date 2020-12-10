@@ -41,13 +41,83 @@ operación seleccionada.
 
 # ___________________________________________________
 #  Variables
+small = "taxi-trips-wrvz-psew-subset-small.csv"
+medium = "taxi-trips-wrvz-psew-subset-medium.csv"
+large = "taxi-trips-wrvz-psew-subset-large.csv"
 # ___________________________________________________
 
 
 # ___________________________________________________
 #  Menu principal
+def printMenu():
+    print("\n")
+    print("*******************************************")
+    print("Bienvenido")
+    print("1- Inicializar Analizador")
+    print("2- Cargar información de taxis en Chicago")
+    print("3- Calcular la cantidad de clusters de viajes")
+    print("4- Ruta turistica circular")
+    print("5- Conocer estaciones más concurridas y la menos concurridas: ")
+
+    print("*******************************************")
 # ___________________________________________________
+
+
+def optionTwo():
+    file = input("¿Que archivo desea cargar?\nEscriba 1 para el pequeño.\nEscriba 2 para el mediano.\nEscriba 3 para el grande.\n")
+    print("\nCargando información de taxis en Chicago")
+    if file[0] == "1":
+        controller.loadFile(cont,small)
+        print("Archivo pequeño cargado exitosamente")
+    elif file[0] == "2":
+        controller.loadFile(cont,medium)
+        print("Archivo mediano cargado exitosamente")
+    elif file[0] == "3":
+        controller.loadFile(cont,large)
+        print("Archivo grande cargado exitosamente")
+    else:
+        print("Ingrese un valor válido")
+
+
+def optionThree():
+    pass 
+
+
+def optionFour():  #N
+    pass
+
+
+def optionFive():
+    pass
 
 """
 Menu principal
 """
+
+while True:
+    printMenu()
+    inputs = input('Seleccione una opción para continuar\n>')
+
+    if int(inputs) == 1:
+        print("\nInicializando....")
+        cont = controller.init()
+
+    elif int(inputs[0]) == 2:
+        executiontime = timeit.timeit(optionTwo, number=1)
+        print(cont['dates'])
+        print("Tiempo de ejecución: " + str(executiontime))
+
+    elif int(inputs[0]) == 3:
+        executiontime = timeit.timeit(optionThree, number=1)
+        print("Tiempo de ejecución: " + str(executiontime))
+
+    elif int(inputs[0]) == 4:      
+        executiontime = timeit.timeit(optionFour, number=1)
+        print("Tiempo de ejecución: " + str(executiontime))
+
+    elif int(inputs[0]) == 5:
+        executiontime = timeit.timeit(optionFive, number=1)
+        print("Tiempo de ejecución: " + str(executiontime))
+    else:
+        sys.exit(0)
+sys.exit(0)

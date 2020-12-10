@@ -38,12 +38,23 @@ recae sobre el controlador.
 
 # ___________________________________________________
 #  Inicializacion del catalogo
+def init():
+    analyzer = model.newAnalyzer()
+    return analyzer
 # ___________________________________________________
 
 
 # ___________________________________________________
 #  Funciones para la carga de datos y almacenamiento
 #  de datos en los modelos
+
+def loadFile(analyzer, file):
+    file = cf.data_dir + file
+    input_file = csv.DictReader(open(file, encoding="utf-8"),
+                                delimiter=",")
+    for trip in input_file:
+        model.adddate(analyzer, trip)
+    return analyzer
 # ___________________________________________________
 
 # ___________________________________________________
