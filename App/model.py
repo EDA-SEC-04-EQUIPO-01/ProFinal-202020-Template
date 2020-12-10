@@ -27,7 +27,7 @@ import config
 from DISClib.ADT.graph import gr
 from DISClib.ADT import map as m
 from DISClib.ADT import list as lt
-from DISClib.ADT import orderedmap as 
+from DISClib.ADT import orderedmap as om
 from DISClib.ADT import minpq as mq
 from DISClib.DataStructures import listiterator as it
 from DISClib.DataStructures import mapentry as me 
@@ -135,8 +135,41 @@ def getMostPointsinDate(analayzer,date,top):
     return res
 
 def getMostPointsinDateRange(analyzer,date1,date2,top):
-    pass
-        
+    info = om.values(analyzer['dates'],date1,date2)
+    iterator1 = it.newIterator(info)
+    taxis = m.newMap(numelements=1000, maptype = 'PROBING', loadfactor=0.5, comparefunction=comparetaxi)
+    taxispoints = mq.newMinPQ(compareinverted)
+    res = lt.newList()
+    while it.hasNext(iterator1):
+        element1 = it.next(iterator1)
+        taxislist = m.keySet(element1)
+        iterator2 = it.newIterator(taxislist)
+        while it.hasNext(iterator2):
+            element2 = it.next(iterator2)
+            taxix = m.get(element1,element2)
+            taxi = me.getValue(taxix)
+            points = (taxi['miles']/taxi['money'])*taxi['services']
+            istaxi = m.get(taxis,element2)
+            if istaxi == None:
+                m.put(taxis,element2,points)
+            else:
+                value = me.getValue(istaxi)
+                value += points
+                m.put(taxis,element2,value)
+    
+    taxislist = m.keySet(taxis)
+    iterator = it.newIterator(taxislist)
+    while it.hasNext(iterator):
+        element = it.next(iterator)
+        taxix = m.get(taxis,element)
+        taxid = me.getKey(taxix)
+        taxipo = me.getValue(taxix)
+        mq.insert(taxispoints,(taxid,taxipo))
+
+    for a in range(0,top):
+        lt.addLast(res,mq.delMin(taxispoints))
+    return res 
+  
 
 # ==============================
 
