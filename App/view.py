@@ -57,7 +57,7 @@ def printMenu():
     print("2- Cargar información de taxis en Chicago")
     print("3- Calcular la cantidad de clusters de viajes")
     print("4- Ruta turistica circular")
-    print("5- Conocer estaciones más concurridas y la menos concurridas: ")
+    print("5- Calcular el mejor horario para seguir una ruta según un rango")
 
     print("*******************************************")
 # ___________________________________________________
@@ -88,7 +88,15 @@ def optionFour():  #N
 
 
 def optionFive():
-    pass
+    horarioBueno = controller.getBestScheduleOnRange(cont,originArea,endArea,initialRange,finalRange)
+    if horarioBueno == False:
+        print("Los rangos de fecha que introdujiste no están en los formatos correctos")
+    elif horarioBueno[0] == None:
+        print("Las areas que introdujiste no existen")
+    else:
+        print("El mejor horario para ir desde la estación",int(originArea),"hasta la estación",int(endArea),"en el rango de tiempo",initialRange,"-",finalRange,"es",horarioBueno[1],"y te demoras",horarioBueno[0],"segundos")
+
+
 
 """
 Menu principal
@@ -104,7 +112,6 @@ while True:
 
     elif int(inputs[0]) == 2:
         executiontime = timeit.timeit(optionTwo, number=1)
-        print(cont['dates'])
         print("Tiempo de ejecución: " + str(executiontime))
 
     elif int(inputs[0]) == 3:
@@ -116,6 +123,10 @@ while True:
         print("Tiempo de ejecución: " + str(executiontime))
 
     elif int(inputs[0]) == 5:
+        originArea = float(input("Introduzca el area de donde quiere viajar: "))
+        endArea = float(input("Introduzca el area a donde quiere ir: "))
+        initialRange = input("Introduzca la hora inicial que quiere consultar en formato HH:MM: ")
+        finalRange = input("Introduzca la hora final que quiere consultar en formato HH:MM: ")
         executiontime = timeit.timeit(optionFive, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
     else:

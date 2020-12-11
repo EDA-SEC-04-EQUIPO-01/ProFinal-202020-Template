@@ -54,9 +54,27 @@ def loadFile(analyzer, file):
                                 delimiter=",")
     for trip in input_file:
         model.adddate(analyzer, trip)
+        model.addAreasTime(analyzer,trip)
     return analyzer
+def mayBeInt(pNumber):
+    try:
+        int(pNumber)
+        return True
+    except:
+        return None
+
+def verifyTime(time):
+    if len(time)==5:
+        if mayBeInt(time[0]) and mayBeInt(time[1]) and time[2] == ":" and mayBeInt(time[3]) and mayBeInt(time[4]):
+            return True
+    return False
 # ___________________________________________________
 
 # ___________________________________________________
 #  Funciones para consultas
 # ___________________________________________________
+
+def getBestScheduleOnRange(analyzer,originArea,endArea,initialRange,finalRange):
+    if verifyTime(initialRange) and verifyTime(finalRange):
+        return model.getBestScheduleOnRange(analyzer,originArea,endArea,initialRange,finalRange)
+    return False
