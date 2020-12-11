@@ -122,7 +122,15 @@ def optionFour():
 
 
 def optionFive():
-    pass
+    horarioBueno = controller.getBestScheduleOnRange(cont,originArea,endArea,initialRange,finalRange)
+    if horarioBueno == False:
+        print("Los rangos de fecha que introdujiste no están en los formatos correctos")
+    elif horarioBueno[0] == None:
+        print("Las areas que introdujiste no existen")
+    else:
+        print("El mejor horario para ir desde la estación",int(originArea),"hasta la estación",int(endArea),"en el rango de tiempo",initialRange,"-",finalRange,"es",horarioBueno[1],"y te demoras",horarioBueno[0],"segundos")
+
+
 
 """
 Menu principal
@@ -149,6 +157,10 @@ while True:
         print("Tiempo de ejecución: " + str(executiontime))
 
     elif int(inputs[0]) == 5:
+        originArea = float(input("Introduzca el area de donde quiere viajar: "))
+        endArea = float(input("Introduzca el area a donde quiere ir: "))
+        initialRange = input("Introduzca la hora inicial que quiere consultar en formato HH:MM: ")
+        finalRange = input("Introduzca la hora final que quiere consultar en formato HH:MM: ")
         executiontime = timeit.timeit(optionFive, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
     else:
