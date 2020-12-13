@@ -36,6 +36,7 @@ from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Graphs import scc
 from DISClib.Algorithms.Graphs import dijsktra as djk
 from DISClib.Utils import error as error
+from DISClib.Algorithms.Sorting import selectionsort as st
 import datetime
 
 assert config
@@ -57,7 +58,10 @@ def newAnalyzer():
                     'dates':None,
                     'companies': None,
                     'areas': None,
-                    'startTime':None
+                    'IDS': None,
+                    'startTime': None,
+                    'ordenedTaxis':None,
+                    'ordenedCompanies':None
                     }
         analyzer['endAreas'] = m.newMap(numelements=47,
                                         maptype = 'PROBING',
@@ -84,11 +88,56 @@ def newAnalyzer():
                                               directed=True,
                                               size=768,
                                               comparefunction=comparetaxi)
-
+        analyzer['IDS']=m.newMap(numelements=300,
+                                      maptype = "PROBING",
+                                      loadfactor= 0.5,
+                                      comparefunction= compareIds)
 
         return analyzer
     except Exception as exp:
         error.reraise(exp, 'model:newAnalyzer')
+
+#-----------------------------------------------------------------
+def crearHashInfo(analyzer,trip):
+    empresa=trip['company']
+    if m.get(analyzer['IDS'],"totalServicios")is None:
+        m.put(analyzer['IDS'], "totalServicios", 1)
+    else:
+        totalParcial = me.getValue(m.get(analyzer['IDS'],"totalServicios"))
+        m.put(analyzer['IDS'],'totalServicios',1+totalParcial)
+    if m.get(analyzer["IDS"], empresa) is None:
+
+        a = m.newMap(numelements=4,
+                    maptype = "PROBING",
+                    loadfactor= 0.5,
+                    comparefunction= compareIds)  
+
+        lista=lt.newList(datastructure='ARRAY_LIST',
+                         cmpfunction = compare)   
+
+        lt.addLast(lista,trip["taxi_id"])  
+        m.put(a,"nombreTaxis",lista)
+        m.put(a,"servicios",1)
+        
+        
+
+    else:
+        a = getValue(analyzer['IDS'],empresa)
+        parejaServicios=m.get(a,"servicios")
+        num= me.getValue(parejaServicios) +1
+        m.put(a,"servicios",num)
+
+
+        parejaTaxis = m.get(a,"nombreTaxis")
+        lista= me.getValue(parejaTaxis) 
+        if trip["taxi_id"] not in lista:
+            lt.addLast(lista,trip["taxi_id"])
+            m.put(a,"nombreTaxis",lista)
+
+    m.put(analyzer['IDS'],empresa, a)
+
+
+#-----------------------------------------------------------------
 
 def addTables(map, key, value):
     isThereArea = m.get(map, float(key))
@@ -175,8 +224,58 @@ def addtaxis(taxis, trip):
         pass
     return taxis
 
+def mayores(analyzer):
+    listaDeCompanias = m.keySet(analyzer['IDS'])
+    iterator = it.newIterator(listaDeCompanias)
+    servicios = lt.newList(datastructure='ARRAY_LIST',cmpfunction=compareinverted1)
+    taxis = lt.newList(datastructure='ARRAY_LIST',cmpfunction=compareinverted1)
+    while it.hasNext(iterator):
+        compania = it.next(iterator)
+        hashSC = getValue(analyzer['IDS'], compania)
+        if compania != "totalServicios":
+            taxisI = lt.size(getValue(hashSC,'nombreTaxis'))
+            serviciosI = getValue(hashSC,'servicios')
+            lt.addLast(servicios,serviciosI)
+            lt.addLast(taxis,taxisI)
+    print(taxis)
+    st.selectionSort(servicios,compareinverted1)
+    st.selectionSort(taxis,compareinverted1)
+    analyzer['ordenedTaxis'] = taxis
+    analyzer['ordenedCompanies'] = servicios
+    print(analyzer['ordenedTaxis'])
+
+
+
 # ==============================
 # Funciones de consulta
+
+def getValue(map,key):
+    return me.getValue(m.get(map,key))
+
+def obtenerInfo(cont, topServicios,topTaxis):
+    obtenerB = m.size(cont['IDS'])
+    obtenerA = me.getValue(m.get(cont['IDS'],"totalServicios"))
+    taxis = (cont['ordenedTaxis'])
+    servicios = cont['ordenedCompanies']
+
+    iterator = it.newIterator(taxis)
+    iterator2 = it.newIterator(servicios)
+    contador = 1
+    obtenerC = lt.newList(datastructure='ARRAY_LIST')
+    obtenerD = lt.newList(datastructure='ARRAY_LIST')
+    while it.hasNext(iterator) and contador != topTaxis:
+
+        taxi = lt.getElement(taxis,contador)
+        lt.addLast(obtenerC,taxi)
+        contador +=1
+    contador = 1
+    while it.hasNext(iterator2) and contador != topServicios:
+        servicio = lt.getElement(servicios,contador)
+        lt.addLast(obtenerD,servicio)
+        contador +=1
+    return (obtenerA, obtenerB, obtenerC, obtenerD)
+    
+
 
 def getMostPointsinDate(analayzer,date,top):
     try:
@@ -331,5 +430,28 @@ def compareinverted(tup1, tup2):
         return -1
     else:
         return 1
+
+def compareinverted1(tup1, tup2):
+    num1 = tup1
+    num2 = tup2
+    if (num1 == num2):
+        return 0
+    elif (num1 > num2):
+        return -1
+    else:
+        return 1
         
+def compareIds(stop, keyvaluestop):
+    """
+    Compara dos estaciones
+    """
+    stopcode = keyvaluestop['key']
+    if (stop == stopcode):
+        return 0
+    elif (stop > stopcode):
+        return 1
+    else:
+        return -1
+
+
 # ==============================

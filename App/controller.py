@@ -56,6 +56,8 @@ def loadFile(analyzer, file):
     for trip in input_file:
         model.adddate(analyzer, trip)
         model.addAreasTime(analyzer,trip)
+        model.crearHashInfo(analyzer,trip)
+    model.mayores(analyzer)
     return analyzer
 def mayBeInt(pNumber):
     try:
@@ -89,4 +91,7 @@ def getMostPointsinDateRange(analyzer,date1,date2,top):
     date1 = datetime.datetime.strptime(date1, '%Y-%m-%d')
     date2 = datetime.datetime.strptime(date2, '%Y-%m-%d')
     return model.getMostPointsinDateRange(analyzer,date1,date2,top)
+
+def obtenerInfo(cont, topTaxis, topServicios):
+    return model.obtenerInfo(cont, topTaxis, topServicios)
 

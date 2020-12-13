@@ -79,8 +79,14 @@ def optionTwo():
         print("Ingrese un valor válido")
 
 
-def optionThree():
-    pass
+def optionThree(): #N
+    try:
+        topTaxis=int(input("Ingresa cuantas empresas quieres ver segun la cantidad de taxis que poseen: "))
+        topServicios=int(input("Ingresa cuantas empresas quieres ver segun la cantidad de trayectos recorridos: "))
+        respuesta= controller.obtenerInfo(cont, topTaxis, topServicios)
+        print("\n",respuesta)
+    except:
+        print("No ingresaste una numero como fecha.")
 
 
 def optionFour(): 
