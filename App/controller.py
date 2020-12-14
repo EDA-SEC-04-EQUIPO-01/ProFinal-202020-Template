@@ -92,6 +92,6 @@ def getMostPointsinDateRange(analyzer,date1,date2,top):
     date2 = datetime.datetime.strptime(date2, '%Y-%m-%d')
     return model.getMostPointsinDateRange(analyzer,date1,date2,top)
 
-def basic(analyzer,topServicios,topTaxis):
-    return model.basic(analyzer,topServicios,topTaxis)
+def extraerInfo(analyzer,topServicios,topTaxis):
+    return model.extraerInfo(analyzer,topServicios,topTaxis)
 

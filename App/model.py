@@ -91,7 +91,6 @@ def newAnalyzer():
     except Exception as exp:
         error.reraise(exp, 'model:newAnalyzer')
 
-#-----------------------------------------------------------------
 def crearHashInfo(analyzer,trip):
     empresa=trip['company']
     if m.get(analyzer['IDS'],"totalServicios") is None:
@@ -113,8 +112,6 @@ def crearHashInfo(analyzer,trip):
         m.put(a,"nombreTaxis",lista)
         m.put(a,"servicios",1)
         
-        
-
     else:
         a = getValue(analyzer['IDS'],empresa)
         parejaServicios=m.get(a,"servicios")
@@ -127,12 +124,8 @@ def crearHashInfo(analyzer,trip):
         if lt.isPresent(lista,trip["taxi_id"]) == 0:
             lt.addLast(lista,trip["taxi_id"])
             m.put(a,"nombreTaxis",lista)
-
     m.put(analyzer['IDS'],empresa, a)
 
-
-
-#-----------------------------------------------------------------
 
 def addTables(map, key, value):
     isThereArea = m.get(map, float(key))
@@ -227,7 +220,7 @@ def getValue(map,key):
     return me.getValue(m.get(map,key))
 
     
-def basic(analayzer, topServicios, topTaxis):
+def extraerInfo(analayzer, topServicios, topTaxis): #N
     totalcompanies = lt.size(m.keySet(analayzer['IDS']))-1
     totaltaxis = 0
     tser = mq.newMinPQ(compareinverted)
@@ -253,7 +246,7 @@ def basic(analayzer, topServicios, topTaxis):
     for a in range(0,topTaxis):
         lt.addLast(res2,mq.delMin(ttax))
 
-    return (totalcompanies,totaltaxis,res1,res2)
+    return (totalcompanies,totaltaxis,res2,res1)
 
 
 def getMostPointsinDate(analayzer,date,top):

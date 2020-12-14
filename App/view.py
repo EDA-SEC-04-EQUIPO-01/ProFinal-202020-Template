@@ -83,8 +83,17 @@ def optionThree(): #N
     
     topTaxis=int(input("Ingresa cuantas empresas quieres ver segun la cantidad de taxis que poseen: "))
     topServicios=int(input("Ingresa cuantas empresas quieres ver segun la cantidad de trayectos recorridos: "))
-    respuesta= controller.basic(cont,topServicios, topTaxis)
-    print("\n",respuesta)
+    respuesta= controller.extraerInfo(cont,topServicios, topTaxis)
+    print("\nEl numero total de taxis es de: ",respuesta[0],"\nEl total de compañias con almenos un vehiculo registrado es de: ",respuesta[1],"\n\nLas compañias con más taxis afiliados son: ")
+    iterator = it.newIterator(respuesta[2])
+    while it.hasNext(iterator):
+        element = it.next(iterator)
+        print(element)
+    print("\n\nLas compañias que mas servicios prestaron son:")
+    iterator = it.newIterator(respuesta[3])
+    while it.hasNext(iterator):
+        element = it.next(iterator)
+        print(element)
     
 
 
