@@ -59,9 +59,7 @@ def newAnalyzer():
                     'companies': None,
                     'areas': None,
                     'IDS': None,
-                    'startTime': None,
-                    'ordenedTaxis':None,
-                    'ordenedCompanies':None
+                    'startTime': None
                     }
         analyzer['endAreas'] = m.newMap(numelements=47,
                                         maptype = 'PROBING',
@@ -80,10 +78,6 @@ def newAnalyzer():
                                       loadfactor=0.5,
                                       comparefunction=comparetaxi)
         analyzer['dates'] = om.newMap(comparefunction=compare)
-        analyzer['companies']=m.newMap(numelements=1000,
-                                      maptype = 'PROBING',
-                                      loadfactor=0.5,
-                                      comparefunction=compare)
         analyzer['areas'] = gr.newGraph(datastructure='ADJ_LIST',
                                               directed=True,
                                               size=768,
@@ -100,7 +94,7 @@ def newAnalyzer():
 #-----------------------------------------------------------------
 def crearHashInfo(analyzer,trip):
     empresa=trip['company']
-    if m.get(analyzer['IDS'],"totalServicios")is None:
+    if m.get(analyzer['IDS'],"totalServicios") is None:
         m.put(analyzer['IDS'], "totalServicios", 1)
     else:
         totalParcial = me.getValue(m.get(analyzer['IDS'],"totalServicios"))
@@ -130,11 +124,12 @@ def crearHashInfo(analyzer,trip):
 
         parejaTaxis = m.get(a,"nombreTaxis")
         lista= me.getValue(parejaTaxis) 
-        if trip["taxi_id"] not in lista:
+        if lt.isPresent(lista,trip["taxi_id"]) == 0:
             lt.addLast(lista,trip["taxi_id"])
             m.put(a,"nombreTaxis",lista)
 
     m.put(analyzer['IDS'],empresa, a)
+
 
 
 #-----------------------------------------------------------------
@@ -224,27 +219,6 @@ def addtaxis(taxis, trip):
         pass
     return taxis
 
-def mayores(analyzer):
-    listaDeCompanias = m.keySet(analyzer['IDS'])
-    iterator = it.newIterator(listaDeCompanias)
-    servicios = lt.newList(datastructure='ARRAY_LIST',cmpfunction=compareinverted1)
-    taxis = lt.newList(datastructure='ARRAY_LIST',cmpfunction=compareinverted1)
-    while it.hasNext(iterator):
-        compania = it.next(iterator)
-        hashSC = getValue(analyzer['IDS'], compania)
-        if compania != "totalServicios":
-            taxisI = lt.size(getValue(hashSC,'nombreTaxis'))
-            serviciosI = getValue(hashSC,'servicios')
-            lt.addLast(servicios,serviciosI)
-            lt.addLast(taxis,taxisI)
-    print(taxis)
-    st.selectionSort(servicios,compareinverted1)
-    st.selectionSort(taxis,compareinverted1)
-    analyzer['ordenedTaxis'] = taxis
-    analyzer['ordenedCompanies'] = servicios
-    print(analyzer['ordenedTaxis'])
-
-
 
 # ==============================
 # Funciones de consulta
@@ -252,29 +226,34 @@ def mayores(analyzer):
 def getValue(map,key):
     return me.getValue(m.get(map,key))
 
-def obtenerInfo(cont, topServicios,topTaxis):
-    obtenerB = m.size(cont['IDS'])
-    obtenerA = me.getValue(m.get(cont['IDS'],"totalServicios"))
-    taxis = (cont['ordenedTaxis'])
-    servicios = cont['ordenedCompanies']
-
-    iterator = it.newIterator(taxis)
-    iterator2 = it.newIterator(servicios)
-    contador = 1
-    obtenerC = lt.newList(datastructure='ARRAY_LIST')
-    obtenerD = lt.newList(datastructure='ARRAY_LIST')
-    while it.hasNext(iterator) and contador != topTaxis:
-
-        taxi = lt.getElement(taxis,contador)
-        lt.addLast(obtenerC,taxi)
-        contador +=1
-    contador = 1
-    while it.hasNext(iterator2) and contador != topServicios:
-        servicio = lt.getElement(servicios,contador)
-        lt.addLast(obtenerD,servicio)
-        contador +=1
-    return (obtenerA, obtenerB, obtenerC, obtenerD)
     
+def basic(analayzer, topServicios, topTaxis):
+    totalcompanies = lt.size(m.keySet(analayzer['IDS']))-1
+    totaltaxis = 0
+    tser = mq.newMinPQ(compareinverted)
+    ttax = mq.newMinPQ(compareinverted)
+    res1 = lt.newList()
+    res2 = lt.newList()
+    listcompanies = m.keySet(analayzer['IDS'])
+    iterator = it.newIterator(listcompanies)
+    while it.hasNext(iterator):
+        element = it.next(iterator)
+        if element != 'totalServicios':
+            elementpr = getValue(analayzer['IDS'],element)
+            services = getValue(elementpr,'servicios')
+            taxis = getValue(elementpr,'nombreTaxis')
+            numtaxis = lt.size(taxis)
+            totaltaxis += numtaxis
+            mq.insert(tser,(element,services))
+            mq.insert(ttax,(element,numtaxis))
+    
+    for a in range(0,topServicios):
+        lt.addLast(res1,mq.delMin(tser))
+    
+    for a in range(0,topTaxis):
+        lt.addLast(res2,mq.delMin(ttax))
+
+    return (totalcompanies,totaltaxis,res1,res2)
 
 
 def getMostPointsinDate(analayzer,date,top):
@@ -424,16 +403,6 @@ def comparetaxi(element1, element2):
 def compareinverted(tup1, tup2):
     num1 = tup1[1]
     num2 = tup2[1]
-    if (num1 == num2):
-        return 0
-    elif (num1 > num2):
-        return -1
-    else:
-        return 1
-
-def compareinverted1(tup1, tup2):
-    num1 = tup1
-    num2 = tup2
     if (num1 == num2):
         return 0
     elif (num1 > num2):

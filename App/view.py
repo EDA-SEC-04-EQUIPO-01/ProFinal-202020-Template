@@ -80,21 +80,20 @@ def optionTwo():
 
 
 def optionThree(): #N
-    try:
-        topTaxis=int(input("Ingresa cuantas empresas quieres ver segun la cantidad de taxis que poseen: "))
-        topServicios=int(input("Ingresa cuantas empresas quieres ver segun la cantidad de trayectos recorridos: "))
-        respuesta= controller.obtenerInfo(cont, topTaxis, topServicios)
-        print("\n",respuesta)
-    except:
-        print("No ingresaste una numero como fecha.")
+    
+    topTaxis=int(input("Ingresa cuantas empresas quieres ver segun la cantidad de taxis que poseen: "))
+    topServicios=int(input("Ingresa cuantas empresas quieres ver segun la cantidad de trayectos recorridos: "))
+    respuesta= controller.basic(cont,topServicios, topTaxis)
+    print("\n",respuesta)
+    
 
 
 def optionFour(): 
     try:
         des = int(input('¿Desea conocer una fecha (1) o un rango de fechas (2)? '))
         if des == 1:
-            date = input('Ingrese la fecha que desea conocer: ')
-            top = int(input('Ingrese el número de elementos que quiere en el top (AAAA-MM-DD): '))
+            date = input('Ingrese la fecha que desea conocer (AAAA-MM-DD): ')
+            top = int(input('Ingrese el número de elementos que quiere en el top: '))
             res = controller.getMostPointsinDate(cont,date,top)
             if res != None:
                 iterator = it.newIterator(res)
