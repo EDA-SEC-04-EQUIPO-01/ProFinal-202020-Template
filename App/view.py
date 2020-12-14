@@ -80,20 +80,22 @@ def optionTwo():
 
 
 def optionThree(): #N
-    
-    topTaxis=int(input("Ingresa cuantas empresas quieres ver segun la cantidad de taxis que poseen: "))
-    topServicios=int(input("Ingresa cuantas empresas quieres ver segun la cantidad de trayectos recorridos: "))
-    respuesta= controller.extraerInfo(cont,topServicios, topTaxis)
-    print("\nEl numero total de taxis es de: ",respuesta[0],"\nEl total de compañias con almenos un vehiculo registrado es de: ",respuesta[1],"\n\nLas compañias con más taxis afiliados son: ")
-    iterator = it.newIterator(respuesta[2])
-    while it.hasNext(iterator):
-        element = it.next(iterator)
-        print(element)
-    print("\n\nLas compañias que mas servicios prestaron son:")
-    iterator = it.newIterator(respuesta[3])
-    while it.hasNext(iterator):
-        element = it.next(iterator)
-        print(element)
+    try:
+        topTaxis=int(input("Ingresa cuantas empresas quieres ver segun la cantidad de taxis que poseen: "))
+        topServicios=int(input("Ingresa cuantas empresas quieres ver segun la cantidad de trayectos recorridos: "))
+        respuesta= controller.extraerInfo(cont,topServicios, topTaxis)
+        print("\nEl numero total de taxis es de: ",respuesta[1],"\nEl total de compañias con almenos un vehiculo registrado es de: ",respuesta[0],"\n\nLas compañias con más taxis afiliados son: ")
+        iterator = it.newIterator(respuesta[2])
+        while it.hasNext(iterator):
+            element = it.next(iterator)
+            print(element)
+        print("\n\nLas compañias que mas servicios prestaron son:")
+        iterator = it.newIterator(respuesta[3])
+        while it.hasNext(iterator):
+            element = it.next(iterator)
+            print(element)
+    except:
+        print("Ingrese un número válido")
     
 
 
@@ -107,9 +109,10 @@ def optionFour():
             if res != None:
                 iterator = it.newIterator(res)
                 i = 1
+                print('\nLos',top,'taxis con mas puntos en la fecha',date,'son:\n')
                 while it.hasNext(iterator):
                     element = it.next(iterator)
-                    pr = "{0}. El taxi {1} con {2} puntos.".format(i,element[0],element[1])
+                    pr = "{0}. El taxi {1} con {2} puntos.\n".format(i,element[0],element[1])
                     print(pr)
                     i+=1
             else:
@@ -122,9 +125,10 @@ def optionFour():
             if res != None:
                 iterator = it.newIterator(res)
                 i = 1
+                print('\nLos',top,'taxis con mas puntos entre la fecha',date1,'y la fecha',date2,'son:\n')
                 while it.hasNext(iterator):
                     element = it.next(iterator)
-                    pr = "{0}. El taxi {1} con {2} puntos.".format(i,element[0],element[1])
+                    pr = "{0}. El taxi {1} con {2} puntos.\n".format(i,element[0],element[1])
                     print(pr)
                     i+=1
             else:

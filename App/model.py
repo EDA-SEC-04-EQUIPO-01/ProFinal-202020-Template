@@ -59,7 +59,7 @@ def newAnalyzer():
                     'companies': None,
                     'areas': None,
                     'IDS': None,
-                    'startTime': None
+                    'startTime': None,
                     'startAreas':None,
                     'endAreas': None,
                     'trips': None
