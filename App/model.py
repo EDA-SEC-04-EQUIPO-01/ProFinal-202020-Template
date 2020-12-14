@@ -60,6 +60,9 @@ def newAnalyzer():
                     'areas': None,
                     'IDS': None,
                     'startTime': None
+                    'startAreas':None,
+                    'endAreas': None,
+                    'trips': None
                     }
         analyzer['endAreas'] = m.newMap(numelements=47,
                                         maptype = 'PROBING',
@@ -171,7 +174,7 @@ def addAreasTime(analyzer,trip):
         vertexB = finalArea+" "+endDate[11:16]
         addAreasTable(analyzer,vertexA, initialArea, True, initialDate)
         addAreasTable(analyzer,vertexB, finalArea, False, endDate)
-        edge = calculateEdge(analyzer['trips'],vertexA,vertexA,tripDuration)
+        edge = calculateEdge(analyzer['trips'],vertexA,vertexB,tripDuration)
         existEdge = gr.getEdge(analyzer['areas'], vertexA,vertexB)
         if existEdge is None:
             gr.addEdge(analyzer['areas'], vertexA,vertexB,edge)
